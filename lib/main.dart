@@ -1,6 +1,11 @@
+import 'package:app_andre/Routes/ConnectPage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 void main() {
+  if (kReleaseMode) Logger.level = Level.warning;
+
   runApp(const MyApp());
 }
 
@@ -24,10 +29,12 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const ConnectPage(),
     );
   }
 }
+
+//TODO: Não esquecer de remover esse lixo de baixo.
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
