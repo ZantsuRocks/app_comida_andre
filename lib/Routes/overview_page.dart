@@ -17,7 +17,7 @@ class _OverviewPageState extends State<OverviewPage> {
       appBar: AppBar(
         toolbarHeight: 100,
         title: Image.asset(
-          'assets/images/logoFull.png',
+          'assets/images/logoFullWhite.png',
           fit: BoxFit.fitHeight,
         ),
         actions: [
