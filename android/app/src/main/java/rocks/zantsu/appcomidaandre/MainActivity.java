@@ -1,4 +1,4 @@
-package com.example.app_andre;
+package rocks.zantsu.appcomidaandre;
 
 import io.flutter.embedding.android.FlutterActivity;
 

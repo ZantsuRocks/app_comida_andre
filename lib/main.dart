@@ -1,4 +1,5 @@
-import 'package:app_andre/Routes/ConnectPage.dart';
+import 'package:appcomidaandre/Routes/connect_page.dart';
+import 'package:appcomidaandre/Routes/fake_login_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Pet Dose',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const ConnectPage(),
+      home: const FakeLoginPage(),
     );
   }
 }

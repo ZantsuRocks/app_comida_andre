@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class SchedulePage extends StatefulWidget {
-  const SchedulePage({Key? key}) : super(key: key);
+class PetPage extends StatefulWidget {
+  const PetPage({Key? key}) : super(key: key);
 
   @override
-  State<SchedulePage> createState() => _SchedulePageState();
+  State<PetPage> createState() => _PetPageState();
 }
 
-class _SchedulePageState extends State<SchedulePage> {
+class _PetPageState extends State<PetPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

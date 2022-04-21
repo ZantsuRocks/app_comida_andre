@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="rocks.zantsu.appcomidaandre">
    <application
-        android:label="app_andre"
+        android:label="Pet Dose"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
