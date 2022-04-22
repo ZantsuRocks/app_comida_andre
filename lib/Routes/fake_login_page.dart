@@ -1,6 +1,8 @@
 import 'package:appcomidaandre/Routes/overview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:logger/logger.dart';
 
 class FakeLoginPage extends StatefulWidget {
@@ -70,12 +72,32 @@ class _FakeLoginPageState extends State<FakeLoginPage> {
 
     _userCont = TextEditingController();
     _passCont = TextEditingController();
+
+    // Future.delayed(const Duration(seconds: 2)).then((value) => FlutterNativeSplash.remove());
   }
 
   _loginAction() {
     logger.d('Login');
 
-    Navigator.push(context, MaterialPageRoute(builder: (ctx) => const OverviewPage()));
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Aguarde'),
+        content: SizedBox(
+          height: 90,
+          child: Center(
+            child: LoadingAnimationWidget.staggeredDotsWave(color: Theme.of(ctx).primaryColor, size: 50),
+          ),
+        ),
+      ),
+    );
+
+    //TODO Catar o ESP e conectar, só depois liberar proxima rota.
+    Future.delayed(const Duration(seconds: 5)).then((value) {
+      Navigator.pop(context);
+      Navigator.push(context, MaterialPageRoute(builder: (ctx) => const OverviewPage()));
+    });
   }
 
   _showPass() {

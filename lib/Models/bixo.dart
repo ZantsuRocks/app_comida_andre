@@ -1,4 +1,7 @@
-class Bixo {
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
+class Bixo with ChangeNotifier {
   String nome;
   int raca; //TODO Fazer "ENUM"
   int idade;

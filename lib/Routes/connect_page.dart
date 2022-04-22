@@ -1,5 +1,6 @@
 import 'package:appcomidaandre/Routes/overview_page.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:logger/logger.dart';
 
 class ConnectPage extends StatefulWidget {
@@ -30,6 +31,20 @@ class _ConnectPageState extends State<ConnectPage> {
   _buttonPress() {
     logger.d('Conectar');
 
-    Navigator.push(context, MaterialPageRoute(builder: (ctx) => const OverviewPage()));
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Aguarde'),
+        content: Center(
+          child: LoadingAnimationWidget.staggeredDotsWave(color: Theme.of(ctx).primaryColor, size: 200),
+        ),
+      ),
+    );
+
+    Future.delayed(const Duration(seconds: 5)).then((value) {
+      Navigator.pop(context);
+      Navigator.push(context, MaterialPageRoute(builder: (ctx) => const OverviewPage()));
+    });
   }
 }
