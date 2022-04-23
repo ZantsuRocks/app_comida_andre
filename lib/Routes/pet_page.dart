@@ -19,6 +19,7 @@ class _PetPageState extends State<PetPage> {
 
   late ScrollController _scrollController;
   late TextEditingController _nomeDoPetCont, _idadeDoPetCont, _pesoDoPetCont, _racaoDoPetCont, _alarmeRacao;
+  late Image _petFoto;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +59,7 @@ class _PetPageState extends State<PetPage> {
                       width: 180,
                       height: 180,
                       decoration: BoxDecoration(
-                        image: DecorationImage(image: AssetImage('assets/images/GatoApp.jpg'), opacity: 0.5), //TODO Imagem do ESP
+                        image: DecorationImage(image: _petFoto.image, opacity: 0.5), //TODO Imagem do ESP
                         color: Colors.grey,
                         shape: BoxShape.circle,
                       ),
@@ -147,12 +148,16 @@ class _PetPageState extends State<PetPage> {
     _pesoDoPetCont = TextEditingController();
     _racaoDoPetCont = TextEditingController();
     _alarmeRacao = TextEditingController();
+    _petFoto = const Image(image: AssetImage('assets/images/logoPD.png'));
 
     SchedulerBinding.instance?.addPostFrameCallback((dur) {
       _nomeDoPetCont.text = context.read<Bixo>().nome;
       _idadeDoPetCont.text = context.read<Bixo>().idade.toString();
       _pesoDoPetCont.text = context.read<Bixo>().peso.toString();
       _racaoDoPetCont.text = context.read<Bixo>().tipoRacao;
+      _petFoto = context.read<Bixo>().foto;
+
+      setState(() {});
     });
 
     agendas = [

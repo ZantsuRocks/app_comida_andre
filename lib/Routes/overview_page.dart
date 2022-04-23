@@ -31,7 +31,7 @@ class _OverviewPageState extends State<OverviewPage> {
           fit: BoxFit.fitHeight,
         ),
         actions: [
-          IconButton(onPressed: _settingsButton, icon: const Icon(Icons.calendar_month)),
+          IconButton(onPressed: _settingsButton, icon: const Icon(Icons.settings)),
         ],
       ),
       bottomSheet: Row(
@@ -83,7 +83,7 @@ class _OverviewPageState extends State<OverviewPage> {
                       width: 180,
                       height: 180,
                       decoration: BoxDecoration(
-                        image: DecorationImage(image: AssetImage('assets/images/GatoApp.jpg')), //TODO Imagem do ESP
+                        image: DecorationImage(image: context.watch<Bixo>().foto.image), //TODO Imagem do ESP
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -129,21 +129,21 @@ class _OverviewPageState extends State<OverviewPage> {
               'Tipo de Ração',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            trailing: Text('Podrona'),
+            trailing: Text(context.watch<Bixo>().tipoRacao),
           ),
           ListTile(
             title: const Text(
               'Peso de Ração no Dispenser',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            trailing: Text('90g'),
+            trailing: Text(context.watch<Bixo>().pesoDispenser.toString() + 'g'),
           ),
           ListTile(
             title: const Text(
               'Peso de Ração no pote',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            trailing: Text('90g'),
+            trailing: Text(context.watch<Bixo>().pesoPote.toString() + 'g'),
           ),
           const Divider(height: 16),
           ListTile(
@@ -166,8 +166,6 @@ class _OverviewPageState extends State<OverviewPage> {
   }
 
   _settingsButton() {
-    logger.d('Agendar');
-
     Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PetPage()));
   }
 }

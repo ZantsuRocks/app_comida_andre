@@ -1,6 +1,7 @@
 import 'package:appcomidaandre/Models/bixo.dart';
 import 'package:appcomidaandre/Routes/overview_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +18,8 @@ class _FakeLoginPageState extends State<FakeLoginPage> {
 
   late TextEditingController _userCont;
   late TextEditingController _passCont;
-  bool hidePassword = true;
+  bool _hidePassword = true;
+  String? _userError, _passError;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,8 @@ class _FakeLoginPageState extends State<FakeLoginPage> {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 controller: _userCont,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
+                  errorText: _userError,
                   labelText: 'Login',
                   hintText: 'seu-usuario',
                 ),
@@ -45,14 +48,15 @@ class _FakeLoginPageState extends State<FakeLoginPage> {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 controller: _passCont,
-                obscureText: hidePassword,
+                obscureText: _hidePassword,
                 decoration: InputDecoration(
+                  errorText: _passError,
                   labelText: 'Senha',
                   hintText: 'sua-senha',
                   suffixIcon: IconButton(
                     icon: Icon(
                       Icons.remove_red_eye,
-                      color: hidePassword ? Theme.of(context).disabledColor : Theme.of(context).primaryColor,
+                      color: _hidePassword ? Theme.of(context).disabledColor : Theme.of(context).primaryColor,
                     ),
                     onPressed: _showPass,
                   ),
@@ -77,7 +81,7 @@ class _FakeLoginPageState extends State<FakeLoginPage> {
   }
 
   _loginAction() {
-    logger.d('Login');
+    if (!_loginFieldsValid()) return;
 
     showDialog(
       context: context,
@@ -95,6 +99,9 @@ class _FakeLoginPageState extends State<FakeLoginPage> {
 
     //TODO Catar o ESP e conectar, só depois liberar proxima rota.
     Future.delayed(const Duration(seconds: 5)).then((value) {
+      _userCont.text = '';
+      _passCont.text = '';
+
       Navigator.pop(context);
 
       context.read<Bixo>().nome = 'Fulano';
@@ -102,14 +109,35 @@ class _FakeLoginPageState extends State<FakeLoginPage> {
       context.read<Bixo>().peso = 96;
       context.read<Bixo>().raca = 'Gato';
       context.read<Bixo>().tipoRacao = 'Podrona';
+      context.read<Bixo>().pesoPote = 10;
+      context.read<Bixo>().pesoDispenser = 100;
+      rootBundle.load('assets/images/GatoApp.jpg').then((val) {
+        context.read<Bixo>().fotoAsBytes = val.buffer.asUint8List();
 
-      Navigator.push(context, MaterialPageRoute(builder: (ctx) => const OverviewPage()));
+        Navigator.push(context, MaterialPageRoute(builder: (ctx) => const OverviewPage()));
+      });
     });
+  }
+
+  bool _loginFieldsValid() {
+    _userError = null;
+    _passError = null;
+    bool retorno = true;
+    if (_userCont.text == '') {
+      _userError = 'Usuário não pode ser vazio';
+      retorno = false;
+    }
+    if (_passCont.text == '') {
+      _passError = 'Senha não pode ser vazia';
+      retorno = false;
+    }
+    setState(() {});
+    return retorno;
   }
 
   _showPass() {
     setState(() {
-      hidePassword = !hidePassword;
+      _hidePassword = !_hidePassword;
     });
   }
 }
