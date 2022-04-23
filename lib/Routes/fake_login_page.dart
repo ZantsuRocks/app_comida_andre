@@ -97,10 +97,11 @@ class _FakeLoginPageState extends State<FakeLoginPage> {
     Future.delayed(const Duration(seconds: 5)).then((value) {
       Navigator.pop(context);
 
-      context.read<Bixo>().nome = 'Nome do Bixo';
+      context.read<Bixo>().nome = 'Fulano';
       context.read<Bixo>().idade = 69;
       context.read<Bixo>().peso = 96;
       context.read<Bixo>().raca = 'Gato';
+      context.read<Bixo>().tipoRacao = 'Podrona';
 
       Navigator.push(context, MaterialPageRoute(builder: (ctx) => const OverviewPage()));
     });

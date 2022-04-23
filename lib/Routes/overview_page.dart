@@ -66,7 +66,11 @@ class _OverviewPageState extends State<OverviewPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Center(
-              child: Text(context.watch<Bixo>().nome),
+              child: Text(
+                context.watch<Bixo>().nome,
+                textScaleFactor: 1.8,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
           ),
           Padding(
@@ -80,7 +84,6 @@ class _OverviewPageState extends State<OverviewPage> {
                       height: 180,
                       decoration: BoxDecoration(
                         image: DecorationImage(image: AssetImage('assets/images/GatoApp.jpg')), //TODO Imagem do ESP
-                        color: Colors.orange,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -103,37 +106,58 @@ class _OverviewPageState extends State<OverviewPage> {
             children: [
               Column(
                 children: [
-                  const Text('Idade'),
+                  const Text(
+                    'Idade',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   Text('${context.watch<Bixo>().idade} Anos'),
                 ],
               ),
               Column(
                 children: [
-                  const Text('Peso'),
+                  const Text(
+                    'Peso',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   Text('${context.watch<Bixo>().peso} gramas'),
                 ],
               ),
             ],
           ),
           ListTile(
-            title: const Text('Tipo de Ração'),
+            title: const Text(
+              'Tipo de Ração',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             trailing: Text('Podrona'),
           ),
           ListTile(
-            title: const Text('Peso de Ração no Dispenser'),
+            title: const Text(
+              'Peso de Ração no Dispenser',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             trailing: Text('90g'),
           ),
           ListTile(
-            title: const Text('Peso de Ração no pote'),
+            title: const Text(
+              'Peso de Ração no pote',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             trailing: Text('90g'),
           ),
           const Divider(height: 16),
           ListTile(
-            title: const Text('Data'),
+            title: const Text(
+              'Data',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             trailing: Text(data),
           ),
           ListTile(
-            title: const Text('Hora'),
+            title: const Text(
+              'Hora',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             trailing: Text(hora),
           ),
         ],

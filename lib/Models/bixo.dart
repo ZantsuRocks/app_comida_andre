@@ -1,3 +1,4 @@
+import 'package:appcomidaandre/Models/agenda.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,7 @@ class Bixo with ChangeNotifier {
   String tipoRacao;
   double pesoDispenser;
   double pesoPote;
+  List<Agenda> agendas;
 
   Bixo({
     this.nome = '',
@@ -18,5 +20,6 @@ class Bixo with ChangeNotifier {
     this.tipoRacao = '',
     this.pesoDispenser = 0,
     this.pesoPote = 0,
+    this.agendas = const [],
   });
 }
