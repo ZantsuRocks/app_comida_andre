@@ -43,7 +43,7 @@ class _PetPageState extends State<PetPage> {
           fit: BoxFit.fitHeight,
         ),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.save)),
+          IconButton(onPressed: _sendToEsp, icon: const Icon(Icons.save)),
         ],
       ),
       body: ListView(
@@ -155,7 +155,7 @@ class _PetPageState extends State<PetPage> {
       _idadeDoPetCont.text = context.read<Bixo>().idade.toString();
       _pesoDoPetCont.text = context.read<Bixo>().peso.toString();
       _racaoDoPetCont.text = context.read<Bixo>().tipoRacao;
-      _petFoto = context.read<Bixo>().foto;
+      _petFoto = Image.memory(context.watch<Bixo>().fotoAsBytes);
 
       setState(() {});
     });
@@ -165,5 +165,9 @@ class _PetPageState extends State<PetPage> {
       Agenda(hora: 18, minuto: 08, peso: 6),
       Agenda(hora: 18, minuto: 09, peso: 7),
     ];
+  }
+
+  _sendToEsp() {
+    //TODO Chamar repositorio e enviar para o esp
   }
 }

@@ -41,6 +41,4 @@ class Bixo with ChangeNotifier {
   }
 
   Uint8List get fotoAsBytes => _foto ?? Uint8List(0);
-
-  Image get foto => Image.memory(_foto ?? Uint8List(0));
 }

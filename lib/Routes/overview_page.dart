@@ -83,7 +83,7 @@ class _OverviewPageState extends State<OverviewPage> {
                       width: 180,
                       height: 180,
                       decoration: BoxDecoration(
-                        image: DecorationImage(image: context.watch<Bixo>().foto.image), //TODO Imagem do ESP
+                        image: DecorationImage(image: Image.memory(context.watch<Bixo>().fotoAsBytes).image), //TODO Imagem do ESP
                         shape: BoxShape.circle,
                       ),
                     ),
