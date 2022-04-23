@@ -1,9 +1,9 @@
+import 'package:appcomidaandre/Models/bixo.dart';
 import 'package:appcomidaandre/Routes/overview_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 
 class FakeLoginPage extends StatefulWidget {
   const FakeLoginPage({Key? key}) : super(key: key);
@@ -96,6 +96,12 @@ class _FakeLoginPageState extends State<FakeLoginPage> {
     //TODO Catar o ESP e conectar, só depois liberar proxima rota.
     Future.delayed(const Duration(seconds: 5)).then((value) {
       Navigator.pop(context);
+
+      context.read<Bixo>().nome = 'Nome do Bixo';
+      context.read<Bixo>().idade = 69;
+      context.read<Bixo>().peso = 96;
+      context.read<Bixo>().raca = 'Gato';
+
       Navigator.push(context, MaterialPageRoute(builder: (ctx) => const OverviewPage()));
     });
   }

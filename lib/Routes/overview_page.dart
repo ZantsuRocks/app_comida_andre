@@ -1,6 +1,9 @@
 import 'package:appcomidaandre/Routes/pet_page.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
+
+import '../Models/bixo.dart';
 
 class OverviewPage extends StatefulWidget {
   const OverviewPage({Key? key}) : super(key: key);
@@ -13,6 +16,13 @@ class _OverviewPageState extends State<OverviewPage> {
   Logger logger = Logger();
   @override
   Widget build(BuildContext context) {
+    DateTime dataAgora = DateTime.now();
+    String data = dataAgora.day.toString().padLeft(2, '0') + '/';
+    data += dataAgora.month.toString().padLeft(2, '0') + '/';
+    data += dataAgora.year.toString().padLeft(4, '0');
+    String hora = dataAgora.hour.toString().padLeft(2, '0') + ':';
+    hora += dataAgora.minute.toString().padLeft(2, '0');
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 100,
@@ -24,12 +34,39 @@ class _OverviewPageState extends State<OverviewPage> {
           IconButton(onPressed: _settingsButton, icon: const Icon(Icons.calendar_month)),
         ],
       ),
+      bottomSheet: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: SizedBox(
+                  height: 60,
+                  child: Image.asset(
+                    'assets/images/pegada.png',
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
+              ),
+              Text(context.watch<Bixo>().raca),
+            ],
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Repor Ração'),
+              Text('Não alimentou-se'),
+            ],
+          ),
+        ],
+      ),
       body: ListView(
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Center(
-              child: Text('Nome do Bixo'),
+              child: Text(context.watch<Bixo>().nome),
             ),
           ),
           Padding(
@@ -38,10 +75,14 @@ class _OverviewPageState extends State<OverviewPage> {
               child: Stack(
                 children: [
                   Center(
-                    child: Image.asset(
-                      'assets/images/GatoApp.jpg',
+                    child: Container(
                       width: 180,
                       height: 180,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(image: AssetImage('assets/images/GatoApp.jpg')), //TODO Imagem do ESP
+                        color: Colors.orange,
+                        shape: BoxShape.circle,
+                      ),
                     ),
                   ),
                   Center(
@@ -62,29 +103,38 @@ class _OverviewPageState extends State<OverviewPage> {
             children: [
               Column(
                 children: [
-                  Text('Vida'),
-                  Text('1 Anos'),
+                  const Text('Idade'),
+                  Text('${context.watch<Bixo>().idade} Anos'),
                 ],
               ),
               Column(
                 children: [
-                  Text('Peso'),
-                  Text('900 gramas'),
+                  const Text('Peso'),
+                  Text('${context.watch<Bixo>().peso} gramas'),
                 ],
               ),
             ],
           ),
           ListTile(
-            title: Text('Tipo de Ração'),
+            title: const Text('Tipo de Ração'),
             trailing: Text('Podrona'),
           ),
           ListTile(
-            title: Text('Peso de Ração no Dispensar'),
+            title: const Text('Peso de Ração no Dispenser'),
             trailing: Text('90g'),
           ),
           ListTile(
-            title: Text('Peso de Ração no pote'),
+            title: const Text('Peso de Ração no pote'),
             trailing: Text('90g'),
+          ),
+          const Divider(height: 16),
+          ListTile(
+            title: const Text('Data'),
+            trailing: Text(data),
+          ),
+          ListTile(
+            title: const Text('Hora'),
+            trailing: Text(hora),
           ),
         ],
       ),
