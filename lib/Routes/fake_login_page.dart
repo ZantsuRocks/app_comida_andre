@@ -6,6 +6,8 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
+import '../Repositories/bixo_repo.dart';
+
 class FakeLoginPage extends StatefulWidget {
   const FakeLoginPage({Key? key}) : super(key: key);
 
@@ -80,7 +82,7 @@ class _FakeLoginPageState extends State<FakeLoginPage> {
     // Future.delayed(const Duration(seconds: 2)).then((value) => FlutterNativeSplash.remove());
   }
 
-  _loginAction() {
+  _loginAction() async {
     if (!_loginFieldsValid()) return;
 
     showDialog(
@@ -97,26 +99,26 @@ class _FakeLoginPageState extends State<FakeLoginPage> {
       ),
     );
 
-    //TODO Catar o ESP e conectar, só depois liberar proxima rota.
-    Future.delayed(const Duration(seconds: 5)).then((value) {
+    //TODO Catar o ESP e conectar, mandar tbm hora, só depois liberar proxima rota.
+    try {
+      await BixoRepo.fillBixo(bixoToFill: context.read<Bixo>());
       _userCont.text = '';
       _passCont.text = '';
 
       Navigator.pop(context);
 
-      context.read<Bixo>().nome = 'Fulano';
-      context.read<Bixo>().idade = 69;
-      context.read<Bixo>().peso = 96;
-      context.read<Bixo>().raca = 'Gato';
-      context.read<Bixo>().tipoRacao = 'Podrona';
-      context.read<Bixo>().pesoPote = 10;
-      context.read<Bixo>().pesoDispenser = 100;
-      rootBundle.load('assets/images/GatoApp.jpg').then((val) {
-        context.read<Bixo>().fotoAsBytes = val.buffer.asUint8List();
+      await BixoRepo.fillBixoImage(bixoToFill: context.read<Bixo>());
 
-        Navigator.push(context, MaterialPageRoute(builder: (ctx) => const OverviewPage()));
-      });
-    });
+      Navigator.push(context, MaterialPageRoute(builder: (ctx) => const OverviewPage()));
+
+      // rootBundle.load('assets/images/GatoApp.jpg').then((val) {
+      //   context.read<Bixo>().fotoAsBytes = val.buffer.asUint8List();
+
+      //   Navigator.push(context, MaterialPageRoute(builder: (ctx) => const OverviewPage()));
+      // });
+    } catch (err) {
+      //TODO Erro
+    }
   }
 
   bool _loginFieldsValid() {

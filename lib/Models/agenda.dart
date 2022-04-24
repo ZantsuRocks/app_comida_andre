@@ -1,6 +1,6 @@
 class Agenda {
   final DateTime _hora;
-  final double peso;
+  final num peso;
 
   Agenda({int hora = 0, int minuto = 0, this.peso = 1}) : _hora = DateTime(2022, 1, 1, hora, minuto);
 

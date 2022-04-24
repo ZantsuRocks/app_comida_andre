@@ -1,4 +1,5 @@
 import 'package:appcomidaandre/Models/agenda.dart';
+import 'package:appcomidaandre/Repositories/bixo_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:logger/logger.dart';
@@ -15,7 +16,7 @@ class PetPage extends StatefulWidget {
 
 class _PetPageState extends State<PetPage> {
   Logger logger = Logger();
-  late List<Agenda> agendas;
+  late List<Agenda> _agendas;
 
   late ScrollController _scrollController;
   late TextEditingController _nomeDoPetCont, _idadeDoPetCont, _pesoDoPetCont, _racaoDoPetCont, _alarmeRacao;
@@ -25,12 +26,12 @@ class _PetPageState extends State<PetPage> {
   Widget build(BuildContext context) {
     List<Widget> agendasToScreen = [];
 
-    for (int i = 0; i < agendas.length; i++) {
+    for (int i = 0; i < _agendas.length; i++) {
       agendasToScreen.add(
         ListTile(
           leading: const Icon(Icons.delete),
-          title: Text('Horario: ' + agendas[i].horario),
-          trailing: Text('${agendas[i].peso}g'),
+          title: Text('Horario: ' + _agendas[i].horario),
+          trailing: Text('${_agendas[i].peso}g'),
         ),
       );
     }
@@ -155,19 +156,28 @@ class _PetPageState extends State<PetPage> {
       _idadeDoPetCont.text = context.read<Bixo>().idade.toString();
       _pesoDoPetCont.text = context.read<Bixo>().peso.toString();
       _racaoDoPetCont.text = context.read<Bixo>().tipoRacao;
-      _petFoto = Image.memory(context.watch<Bixo>().fotoAsBytes);
+      _petFoto = Image.memory(context.read<Bixo>().fotoAsBytes);
+      _agendas = context.read<Bixo>().agendas;
 
       setState(() {});
     });
 
-    agendas = [
-      Agenda(hora: 18, minuto: 07, peso: 5),
-      Agenda(hora: 18, minuto: 08, peso: 6),
-      Agenda(hora: 18, minuto: 09, peso: 7),
-    ];
+    _agendas = [];
   }
 
   _sendToEsp() {
     //TODO Chamar repositorio e enviar para o esp
+    // _validaCampos();
+    Bixo bixoToSend = Bixo(
+      nome: _nomeDoPetCont.text,
+      idade: int.tryParse(_idadeDoPetCont.text) ?? 0,
+      peso: num.tryParse(_pesoDoPetCont.text) ?? 0,
+      tipoRacao: _racaoDoPetCont.text,
+      agendas: _agendas,
+      pesoDispenser: context.read<Bixo>().pesoDispenser,
+      pesoPote: context.read<Bixo>().pesoPote,
+    );
+
+    BixoRepo.sendBixo(bixoToSend, bixoToReplace: context.read<Bixo>());
   }
 }

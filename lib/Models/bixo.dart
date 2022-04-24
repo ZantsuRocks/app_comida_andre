@@ -8,10 +8,10 @@ class Bixo with ChangeNotifier {
   String nome;
   String raca;
   int idade;
-  double peso;
+  num peso;
   String tipoRacao;
-  double pesoDispenser;
-  double pesoPote;
+  num pesoDispenser;
+  num pesoPote;
   List<Agenda> agendas;
 
   Bixo({
@@ -25,15 +25,51 @@ class Bixo with ChangeNotifier {
     this.agendas = const [],
   });
 
-  replaceFromJson(Map<String, dynamic> json) {
+  void replaceFromJson(Map<String, dynamic> json) {
     nome = json['nome'];
     raca = json['raca'];
     idade = json['idade'];
     peso = json['peso'];
-    tipoRacao = json['racao'];
-    pesoDispenser = json['pdisp'];
-    pesoPote = json['ppote'];
-    agendas = json['agendas'];
+    tipoRacao = json['tipoRacao'];
+    pesoDispenser = json['pesoDispenser'];
+    pesoPote = json['pesoPote'];
+
+    agendas = [];
+    for (Map<String, dynamic> e in json['agendas']) {
+      agendas.add(
+        Agenda(
+          hora: e['hora'],
+          minuto: e['minuto'],
+          peso: e['peso'],
+        ),
+      );
+    }
+    //agendas = json['agendas'];
+  }
+
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> toReturn = {};
+
+    toReturn['nome'] = nome;
+    toReturn['raca'] = raca;
+    toReturn['idade'] = idade;
+    toReturn['peso'] = peso;
+    toReturn['tipoRacao'] = tipoRacao;
+    toReturn['pesoDispenser'] = pesoDispenser;
+    toReturn['pesoPote'] = pesoPote;
+
+    toReturn['agendas'] = [];
+    for (Agenda e in agendas) {
+      toReturn['agendas'].add(
+        {
+          'hora': e.hora,
+          'minuto': e.minuto,
+          'peso': e.peso,
+        },
+      );
+    }
+
+    return toReturn;
   }
 
   set fotoAsBytes(Uint8List bytes) {
