@@ -14,6 +14,7 @@ class OverviewPage extends StatefulWidget {
 
 class _OverviewPageState extends State<OverviewPage> {
   Logger logger = Logger();
+
   @override
   Widget build(BuildContext context) {
     DateTime dataAgora = DateTime.now();
@@ -22,6 +23,8 @@ class _OverviewPageState extends State<OverviewPage> {
     data += dataAgora.year.toString().padLeft(4, '0');
     String hora = dataAgora.hour.toString().padLeft(2, '0') + ':';
     hora += dataAgora.minute.toString().padLeft(2, '0');
+
+    Bixo bixoWatch = context.watch<Bixo>();
 
     return Scaffold(
       appBar: AppBar(
@@ -49,14 +52,15 @@ class _OverviewPageState extends State<OverviewPage> {
                   ),
                 ),
               ),
-              Text(context.watch<Bixo>().raca),
+              Text(bixoWatch.raca),
             ],
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Repor Ração'),
-              Text('Não alimentou-se'),
+              //FIXME Ver pesos para mensagens
+              Text(bixoWatch.pesoDispenser < 10 ? 'Repor Ração' : 'Tem Ração'),
+              Text(bixoWatch.pesoDispenser > 20 ? 'Não alimentou-se' : 'Alimentou-se'),
             ],
           ),
         ],
@@ -67,7 +71,7 @@ class _OverviewPageState extends State<OverviewPage> {
             padding: const EdgeInsets.all(8.0),
             child: Center(
               child: Text(
-                context.watch<Bixo>().nome,
+                bixoWatch.nome,
                 textScaleFactor: 1.8,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
@@ -83,7 +87,7 @@ class _OverviewPageState extends State<OverviewPage> {
                       width: 180,
                       height: 180,
                       decoration: BoxDecoration(
-                        image: DecorationImage(image: Image.memory(context.watch<Bixo>().fotoAsBytes).image), //TODO Imagem do ESP
+                        image: DecorationImage(image: Image.memory(bixoWatch.fotoAsBytes).image),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -110,7 +114,7 @@ class _OverviewPageState extends State<OverviewPage> {
                     'Idade',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text('${context.watch<Bixo>().idade} Anos'),
+                  Text('${bixoWatch.idade} Anos'),
                 ],
               ),
               Column(
@@ -119,7 +123,7 @@ class _OverviewPageState extends State<OverviewPage> {
                     'Peso',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text('${context.watch<Bixo>().peso} gramas'),
+                  Text('${bixoWatch.peso} gramas'),
                 ],
               ),
             ],
@@ -129,21 +133,21 @@ class _OverviewPageState extends State<OverviewPage> {
               'Tipo de Ração',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            trailing: Text(context.watch<Bixo>().tipoRacao),
+            trailing: Text(bixoWatch.tipoRacao),
           ),
           ListTile(
             title: const Text(
               'Peso de Ração no Dispenser',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            trailing: Text(context.watch<Bixo>().pesoDispenser.toString() + 'g'),
+            trailing: Text(bixoWatch.pesoDispenser.toString() + 'g'),
           ),
           ListTile(
             title: const Text(
               'Peso de Ração no pote',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            trailing: Text(context.watch<Bixo>().pesoPote.toString() + 'g'),
+            trailing: Text(bixoWatch.pesoPote.toString() + 'g'),
           ),
           const Divider(height: 16),
           ListTile(
@@ -166,6 +170,11 @@ class _OverviewPageState extends State<OverviewPage> {
   }
 
   _settingsButton() {
-    Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PetPage()));
+    Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PetPage())).then((ret) {
+      //FIXME: Por algum motivo o provider não ta rebuildando.
+      Future.delayed(const Duration(seconds: 2), () {
+        setState(() {});
+      });
+    });
   }
 }

@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:appcomidaandre/Models/agenda.dart';
 import 'package:appcomidaandre/Repositories/bixo_repo.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:logger/logger.dart';
@@ -22,6 +25,8 @@ class _PetPageState extends State<PetPage> {
   late TextEditingController _nomeDoPetCont, _idadeDoPetCont, _pesoDoPetCont, _racaoDoPetCont, _alarmeRacao;
   late Image _petFoto;
 
+  File? file;
+
   @override
   Widget build(BuildContext context) {
     List<Widget> agendasToScreen = [];
@@ -29,7 +34,12 @@ class _PetPageState extends State<PetPage> {
     for (int i = 0; i < _agendas.length; i++) {
       agendasToScreen.add(
         ListTile(
-          leading: const Icon(Icons.delete),
+          leading: IconButton(
+              onPressed: () {
+                _agendas.removeAt(i);
+                setState(() {});
+              },
+              icon: const Icon(Icons.delete)),
           title: Text('Horario: ' + _agendas[i].horario),
           trailing: Text('${_agendas[i].peso}g'),
         ),
@@ -56,19 +66,22 @@ class _PetPageState extends State<PetPage> {
               child: Stack(
                 children: [
                   Center(
-                    child: Container(
-                      width: 180,
-                      height: 180,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(image: _petFoto.image, opacity: 0.5), //TODO Imagem do ESP
-                        color: Colors.grey,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Icon(
-                          Icons.add,
-                          size: 60,
-                          color: Colors.white.withOpacity(0.6),
+                    child: GestureDetector(
+                      onTap: _changeImage,
+                      child: Container(
+                        width: 180,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(image: _petFoto.image, opacity: 0.5),
+                          color: Colors.grey,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.add,
+                            size: 60,
+                            color: Colors.white.withOpacity(0.6),
+                          ),
                         ),
                       ),
                     ),
@@ -123,12 +136,21 @@ class _PetPageState extends State<PetPage> {
             title: const Text('Alimentações'),
             trailing: IconButton(
               icon: const Icon(Icons.add),
-              onPressed: () {
-                _scrollController.animateTo(
+              onPressed: () async {
+                await _scrollController.animateTo(
                   _scrollController.position.maxScrollExtent,
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeIn,
                 );
+
+                final TimeOfDay? timeOfDay = await showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay.now(),
+                  // initialEntryMode: TimePickerEntryMode.dial,
+                );
+                if (timeOfDay != null) {
+                  //TODO peso
+                }
               },
             ),
           ),
@@ -151,18 +173,41 @@ class _PetPageState extends State<PetPage> {
     _alarmeRacao = TextEditingController();
     _petFoto = const Image(image: AssetImage('assets/images/logoPD.png'));
 
-    SchedulerBinding.instance?.addPostFrameCallback((dur) {
-      _nomeDoPetCont.text = context.read<Bixo>().nome;
-      _idadeDoPetCont.text = context.read<Bixo>().idade.toString();
-      _pesoDoPetCont.text = context.read<Bixo>().peso.toString();
-      _racaoDoPetCont.text = context.read<Bixo>().tipoRacao;
-      _petFoto = Image.memory(context.read<Bixo>().fotoAsBytes);
-      _agendas = context.read<Bixo>().agendas;
+    // SchedulerBinding.instance?.addPostFrameCallback((dur) {
+    _nomeDoPetCont.text = context.read<Bixo>().nome;
+    _idadeDoPetCont.text = context.read<Bixo>().idade.toString();
+    _pesoDoPetCont.text = context.read<Bixo>().peso.toString();
+    _racaoDoPetCont.text = context.read<Bixo>().tipoRacao;
+    _petFoto = Image.memory(context.read<Bixo>().fotoAsBytes);
+    _agendas = List.from(context.read<Bixo>().agendas);
 
-      setState(() {});
-    });
+    //   setState(() {});
+    // });
 
-    _agendas = [];
+    // _agendas = [];
+  }
+
+  _changeImage() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      // allowedExtensions: [
+      //   'png',
+      //   'jpg',
+      // ],
+    );
+
+    if (result != null) {
+      if (result.files.single.path != null) {
+        file = File(result.files.single.path ?? '');
+        if (file!.lengthSync() > 300000) {
+          logger.w('Arquivo maior que 300k');
+          return;
+        }
+        setState(() {
+          _petFoto = Image.memory(file!.readAsBytesSync());
+        });
+      }
+    }
   }
 
   _sendToEsp() {
@@ -179,5 +224,18 @@ class _PetPageState extends State<PetPage> {
     );
 
     BixoRepo.sendBixo(bixoToSend, bixoToReplace: context.read<Bixo>());
+
+    if (file != null) {
+      BixoRepo.sendBixoImage(file!.readAsBytesSync(), bixoToReplace: context.read<Bixo>());
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        duration: Duration(seconds: 3),
+        content: Text('Informações salvas.'),
+      ),
+    );
+
+    Navigator.pop(context);
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:http/http.dart';
 
@@ -6,7 +7,7 @@ import '../Models/bixo.dart';
 
 class BixoRepo {
   // static String startPath = 'http://192.168.4.1';
-  static String startPath = 'http://192.168.0.16/api/v1/';
+  static String startPath = 'http://192.168.0.23/api/v1/';
   static Uri _urlGet = Uri.parse('${startPath}get');
   static Uri _urlPost = Uri.parse('${startPath}post');
   static Uri _urlImageGet = Uri.parse('${startPath}image-get');
@@ -58,6 +59,24 @@ class BixoRepo {
         return bixoToReplace;
       }
       return Bixo()..replaceFromJson(_bixoJson);
+    } else {
+      throw (Exception('Response Code was: ${response.statusCode}'));
+    }
+  }
+
+  static Future<Bixo> sendBixoImage(Uint8List imageToSend, {Bixo? bixoToReplace}) async {
+    Response response = await post(
+      _urlImagePost,
+      headers: {'Content-Type': 'application/octet-stream'},
+      body: imageToSend,
+    );
+
+    if (response.statusCode == 200) {
+      if (bixoToReplace != null) {
+        bixoToReplace.fotoAsBytes = imageToSend;
+        return bixoToReplace;
+      }
+      return Bixo()..fotoAsBytes = imageToSend;
     } else {
       throw (Exception('Response Code was: ${response.statusCode}'));
     }
