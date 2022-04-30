@@ -159,7 +159,42 @@ class _PetPageState extends State<PetPage> {
                   // initialEntryMode: TimePickerEntryMode.dial,
                 );
                 if (timeOfDay != null) {
-                  //TODO peso
+                  String? pesoTexto;
+                  num peso = 0;
+                  do {
+                    pesoTexto = await showDialog(
+                      context: context,
+                      builder: (ctx) {
+                        TextEditingController pesoCont = TextEditingController();
+                        return AlertDialog(
+                          title: const Text('Peso a Liberar'),
+                          content: TextField(
+                            controller: pesoCont,
+                            decoration: InputDecoration(
+                              labelText: 'Peso',
+                              errorText: peso == -1 ? 'Deve ser um Numero' : null,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx, pesoCont.text),
+                              child: const Text('OK'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx, null),
+                              child: const Text('Cancelar'),
+                            )
+                          ],
+                        );
+                      },
+                    );
+                    if (pesoTexto != null) {
+                      peso = num.tryParse(pesoTexto) ?? -1;
+                    } else {
+                      return;
+                    }
+                  } while (peso == -1);
+                  //TODO Montar agenda e colocar na lista.
                 }
               },
             ),
