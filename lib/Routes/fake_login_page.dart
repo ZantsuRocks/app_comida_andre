@@ -100,12 +100,18 @@ class _FakeLoginPageState extends State<FakeLoginPage> {
       ),
     );
 
-    //TODO Catar o ESP e conectar, mandar tbm hora, só depois liberar proxima rota.
     try {
-      // await WiFiForIoTPlugin.connect('dosador_pet', password: 'dosadorpet');
-      // await WiFiForIoTPlugin.forceWifiUsage(true);
+      String passToConnect = 'dosadorpet';
+      String ssidToConnect = 'dosador_pet';
+      await WiFiForIoTPlugin.findAndConnect(ssidToConnect, password: passToConnect);
+      while (await WiFiForIoTPlugin.getSSID() != ssidToConnect) {
+        await Future.delayed(const Duration(seconds: 1));
+      }
+      await WiFiForIoTPlugin.forceWifiUsage(true);
+
       await BixoRepo.fillBixo(bixoToFill: context.read<Bixo>());
       await BixoRepo.fillBixoImage(bixoToFill: context.read<Bixo>());
+      RESTHelper.sendHora(); //Não precisa esperar isso pra logar.
       _userCont.text = '';
       _passCont.text = '';
 

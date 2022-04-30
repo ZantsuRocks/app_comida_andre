@@ -6,8 +6,8 @@ import 'package:http/http.dart';
 import '../Models/bixo.dart';
 
 class BixoRepo {
-  // static String startPath = 'http://192.168.4.1';
-  static String startPath = 'http://192.168.0.10/api/v1/';
+  static String startPath = 'http://192.168.4.1/';
+  // static String startPath = 'http://192.168.0.10/api/v1/';
   static final Uri _urlGet = Uri.parse('${startPath}get');
   static final Uri _urlPost = Uri.parse('${startPath}post');
   static final Uri _urlImageGet = Uri.parse('${startPath}image-get');
@@ -77,6 +77,39 @@ class BixoRepo {
         return bixoToReplace;
       }
       return Bixo()..fotoAsBytes = imageToSend;
+    } else {
+      throw (Exception('Response Code was: ${response.statusCode}'));
+    }
+  }
+}
+
+class RESTHelper {
+  static String startPath = 'http://192.168.4.1/';
+  // static String startPath = 'http://192.168.0.10/api/v1/';
+  static final Uri _urlHora = Uri.parse('${startPath}data');
+
+  static Future<void> sendHora() async {
+    DateTime agora = DateTime.now();
+
+    String horaJson = jsonEncode(
+      {
+        'ano': agora.year,
+        'mes': agora.month,
+        'dia': agora.day,
+        'hora': agora.hour,
+        'minuto': agora.minute,
+        'segundo': agora.second,
+      },
+    );
+
+    Response response = await post(
+      _urlHora,
+      body: horaJson,
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      return;
     } else {
       throw (Exception('Response Code was: ${response.statusCode}'));
     }
