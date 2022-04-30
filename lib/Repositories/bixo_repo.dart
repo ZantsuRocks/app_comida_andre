@@ -7,11 +7,11 @@ import '../Models/bixo.dart';
 
 class BixoRepo {
   // static String startPath = 'http://192.168.4.1';
-  static String startPath = 'http://192.168.0.23/api/v1/';
-  static Uri _urlGet = Uri.parse('${startPath}get');
-  static Uri _urlPost = Uri.parse('${startPath}post');
-  static Uri _urlImageGet = Uri.parse('${startPath}image-get');
-  static Uri _urlImagePost = Uri.parse('${startPath}image-post');
+  static String startPath = 'http://192.168.0.10/api/v1/';
+  static final Uri _urlGet = Uri.parse('${startPath}get');
+  static final Uri _urlPost = Uri.parse('${startPath}post');
+  static final Uri _urlImageGet = Uri.parse('${startPath}image-get');
+  static final Uri _urlImagePost = Uri.parse('${startPath}image-post');
 
   static Future<Bixo> fillBixo({Bixo? bixoToFill}) async {
     Response response = await get(_urlGet);

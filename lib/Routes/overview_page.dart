@@ -170,11 +170,6 @@ class _OverviewPageState extends State<OverviewPage> {
   }
 
   _settingsButton() {
-    Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PetPage())).then((ret) {
-      //FIXME: Por algum motivo o provider não ta rebuildando.
-      Future.delayed(const Duration(seconds: 2), () {
-        setState(() {});
-      });
-    });
+    Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PetPage()));
   }
 }

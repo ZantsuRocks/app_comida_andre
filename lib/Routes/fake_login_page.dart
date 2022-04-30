@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:wifi_iot/wifi_iot.dart';
 
 import '../Repositories/bixo_repo.dart';
 
@@ -101,23 +102,26 @@ class _FakeLoginPageState extends State<FakeLoginPage> {
 
     //TODO Catar o ESP e conectar, mandar tbm hora, só depois liberar proxima rota.
     try {
+      // await WiFiForIoTPlugin.connect('dosador_pet', password: 'dosadorpet');
+      // await WiFiForIoTPlugin.forceWifiUsage(true);
       await BixoRepo.fillBixo(bixoToFill: context.read<Bixo>());
+      await BixoRepo.fillBixoImage(bixoToFill: context.read<Bixo>());
       _userCont.text = '';
       _passCont.text = '';
 
       Navigator.pop(context);
 
-      await BixoRepo.fillBixoImage(bixoToFill: context.read<Bixo>());
-
       Navigator.push(context, MaterialPageRoute(builder: (ctx) => const OverviewPage()));
-
-      // rootBundle.load('assets/images/GatoApp.jpg').then((val) {
-      //   context.read<Bixo>().fotoAsBytes = val.buffer.asUint8List();
-
-      //   Navigator.push(context, MaterialPageRoute(builder: (ctx) => const OverviewPage()));
-      // });
     } catch (err) {
-      //TODO Erro
+      Navigator.pop(context);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 3),
+          backgroundColor: Theme.of(context).errorColor,
+          content: const Text('Falha ao conectar-se'),
+        ),
+      );
     }
   }
 

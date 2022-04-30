@@ -45,6 +45,7 @@ class Bixo with ChangeNotifier {
       );
     }
     //agendas = json['agendas'];
+    notifyListeners();
   }
 
   Map<String, dynamic> toJson() {
@@ -74,6 +75,7 @@ class Bixo with ChangeNotifier {
 
   set fotoAsBytes(Uint8List bytes) {
     _foto = bytes;
+    notifyListeners();
   }
 
   Uint8List get fotoAsBytes => _foto ?? Uint8List(0);

@@ -23,6 +23,7 @@ class _PetPageState extends State<PetPage> {
 
   late ScrollController _scrollController;
   late TextEditingController _nomeDoPetCont, _idadeDoPetCont, _pesoDoPetCont, _racaoDoPetCont, _alarmeRacao;
+  String? _errIdade, _errPeso;
   late Image _petFoto;
 
   File? file;
@@ -54,7 +55,10 @@ class _PetPageState extends State<PetPage> {
           fit: BoxFit.fitHeight,
         ),
         actions: [
-          IconButton(onPressed: _sendToEsp, icon: const Icon(Icons.save)),
+          IconButton(
+            onPressed: _sendToEsp,
+            icon: const Icon(Icons.save),
+          ),
         ],
       ),
       body: ListView(
@@ -108,13 +112,19 @@ class _PetPageState extends State<PetPage> {
           ListTile(
             title: TextField(
               controller: _idadeDoPetCont,
-              decoration: const InputDecoration(labelText: 'Idade do Pet'),
+              decoration: InputDecoration(
+                labelText: 'Idade do Pet',
+                errorText: _errIdade,
+              ),
             ),
           ),
           ListTile(
             title: TextField(
               controller: _pesoDoPetCont,
-              decoration: const InputDecoration(labelText: 'Peso do Pet'),
+              decoration: InputDecoration(
+                labelText: 'Peso do Pet',
+                errorText: _errPeso,
+              ),
             ),
           ),
           ListTile(
@@ -210,9 +220,12 @@ class _PetPageState extends State<PetPage> {
     }
   }
 
-  _sendToEsp() {
+  _sendToEsp() async {
     //TODO Chamar repositorio e enviar para o esp
-    // _validaCampos();
+    _validaCampos();
+
+    Bixo currentBixo = context.read<Bixo>();
+
     Bixo bixoToSend = Bixo(
       nome: _nomeDoPetCont.text,
       idade: int.tryParse(_idadeDoPetCont.text) ?? 0,
@@ -223,10 +236,10 @@ class _PetPageState extends State<PetPage> {
       pesoPote: context.read<Bixo>().pesoPote,
     );
 
-    BixoRepo.sendBixo(bixoToSend, bixoToReplace: context.read<Bixo>());
+    await BixoRepo.sendBixo(bixoToSend, bixoToReplace: currentBixo);
 
     if (file != null) {
-      BixoRepo.sendBixoImage(file!.readAsBytesSync(), bixoToReplace: context.read<Bixo>());
+      await BixoRepo.sendBixoImage(file!.readAsBytesSync(), bixoToReplace: currentBixo);
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -237,5 +250,21 @@ class _PetPageState extends State<PetPage> {
     );
 
     Navigator.pop(context);
+  }
+
+  bool _validaCampos() {
+    bool retorno = true;
+    _errIdade = null;
+    _errPeso = null;
+    if (int.tryParse(_idadeDoPetCont.text) == null) {
+      _errIdade = 'Idade deve ser um numero';
+      retorno = false;
+    }
+    if (num.tryParse(_pesoDoPetCont.text) == null) {
+      _errIdade = 'Peso deve ser um numero';
+      retorno = false;
+    }
+
+    return retorno;
   }
 }
