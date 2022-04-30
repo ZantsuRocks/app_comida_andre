@@ -4,7 +4,6 @@ import 'package:appcomidaandre/Models/agenda.dart';
 import 'package:appcomidaandre/Repositories/bixo_repo.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -235,13 +234,15 @@ class _PetPageState extends State<PetPage> {
     _alarmeRacao = TextEditingController();
     _petFoto = const Image(image: AssetImage('assets/images/logoPD.png'));
 
+    Bixo initBixo = context.read<Bixo>();
+
     // SchedulerBinding.instance?.addPostFrameCallback((dur) {
-    _nomeDoPetCont.text = context.read<Bixo>().nome;
-    _idadeDoPetCont.text = context.read<Bixo>().idade.toString();
-    _pesoDoPetCont.text = context.read<Bixo>().peso.toString();
-    _racaoDoPetCont.text = context.read<Bixo>().tipoRacao;
-    _petFoto = Image.memory(context.read<Bixo>().fotoAsBytes);
-    _agendas = List.from(context.read<Bixo>().agendas);
+    _nomeDoPetCont.text = initBixo.nome;
+    _idadeDoPetCont.text = initBixo.idade.toString();
+    _pesoDoPetCont.text = initBixo.peso.toString();
+    _racaoDoPetCont.text = initBixo.tipoRacao;
+    _petFoto = Image.memory(initBixo.fotoAsBytes);
+    _agendas = List.from(initBixo.agendas);
 
     //   setState(() {});
     // });
@@ -273,35 +274,53 @@ class _PetPageState extends State<PetPage> {
   }
 
   _sendToEsp() async {
-    //TODO Chamar repositorio e enviar para o esp
-    _validaCampos();
+    if (!_validaCampos()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).errorColor,
+          duration: const Duration(seconds: 3),
+          content: const Text('Validar campos.'),
+        ),
+      );
+      return;
+    }
 
     Bixo currentBixo = context.read<Bixo>();
 
     Bixo bixoToSend = Bixo(
       nome: _nomeDoPetCont.text,
-      idade: int.tryParse(_idadeDoPetCont.text) ?? 0,
-      peso: num.tryParse(_pesoDoPetCont.text) ?? 0,
+      idade: int.tryParse(_idadeDoPetCont.text)!,
+      peso: num.tryParse(_pesoDoPetCont.text)!,
       tipoRacao: _racaoDoPetCont.text,
       agendas: _agendas,
-      pesoDispenser: context.read<Bixo>().pesoDispenser,
-      pesoPote: context.read<Bixo>().pesoPote,
+      pesoDispenser: currentBixo.pesoDispenser,
+      pesoPote: currentBixo.pesoPote,
     );
 
-    await BixoRepo.sendBixo(bixoToSend, bixoToReplace: currentBixo);
+    try {
+      await BixoRepo.sendBixo(bixoToSend, bixoToReplace: currentBixo);
 
-    if (file != null) {
-      await BixoRepo.sendBixoImage(file!.readAsBytesSync(), bixoToReplace: currentBixo);
+      if (file != null) {
+        await BixoRepo.sendBixoImage(file!.readAsBytesSync(), bixoToReplace: currentBixo);
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          duration: Duration(seconds: 3),
+          content: Text('Informações salvas.'),
+        ),
+      );
+
+      Navigator.pop(context);
+    } catch (err) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).errorColor,
+          duration: const Duration(seconds: 3),
+          content: const Text('Não foi possivel salvar todas as informações'),
+        ),
+      );
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        duration: Duration(seconds: 3),
-        content: Text('Informações salvas.'),
-      ),
-    );
-
-    Navigator.pop(context);
   }
 
   bool _validaCampos() {
@@ -313,7 +332,7 @@ class _PetPageState extends State<PetPage> {
       retorno = false;
     }
     if (num.tryParse(_pesoDoPetCont.text) == null) {
-      _errIdade = 'Peso deve ser um numero';
+      _errPeso = 'Peso deve ser um numero';
       retorno = false;
     }
 
