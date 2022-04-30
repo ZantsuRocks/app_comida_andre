@@ -114,6 +114,7 @@ class _PetPageState extends State<PetPage> {
               controller: _idadeDoPetCont,
               decoration: InputDecoration(
                 labelText: 'Idade do Pet',
+                suffixText: 'anos',
                 errorText: _errIdade,
               ),
             ),
@@ -123,6 +124,7 @@ class _PetPageState extends State<PetPage> {
               controller: _pesoDoPetCont,
               decoration: InputDecoration(
                 labelText: 'Peso do Pet',
+                suffixText: 'g',
                 errorText: _errPeso,
               ),
             ),
@@ -172,6 +174,7 @@ class _PetPageState extends State<PetPage> {
                             controller: pesoCont,
                             decoration: InputDecoration(
                               labelText: 'Peso',
+                              suffixText: 'g',
                               errorText: peso == -1 ? 'Deve ser um Numero' : null,
                             ),
                           ),
@@ -194,7 +197,21 @@ class _PetPageState extends State<PetPage> {
                       return;
                     }
                   } while (peso == -1);
-                  //TODO Montar agenda e colocar na lista.
+                  setState(() {
+                    _agendas.add(
+                      Agenda(
+                        hora: timeOfDay.hour,
+                        minuto: timeOfDay.minute,
+                        peso: peso,
+                      ),
+                    );
+
+                    _scrollController.animateTo(
+                      _scrollController.position.maxScrollExtent,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeIn,
+                    );
+                  });
                 }
               },
             ),
