@@ -12,6 +12,8 @@ class Bixo with ChangeNotifier {
   String tipoRacao;
   num pesoDispenser;
   num pesoPote;
+  bool comFome;
+  int tempoComer;
   List<Agenda> agendas;
 
   Bixo({
@@ -22,17 +24,21 @@ class Bixo with ChangeNotifier {
     this.tipoRacao = '',
     this.pesoDispenser = 0,
     this.pesoPote = 0,
+    this.comFome = false,
+    this.tempoComer = 0,
     this.agendas = const [],
   });
 
   void replaceFromJson(Map<String, dynamic> json) {
-    nome = json['nome'];
-    raca = json['raca'];
-    idade = json['idade'];
-    peso = json['peso'];
-    tipoRacao = json['tipoRacao'];
-    pesoDispenser = json['pesoDispenser'];
-    pesoPote = json['pesoPote'];
+    nome = json['nome'] ?? '';
+    raca = json['raca'] ?? '';
+    idade = json['idade'] ?? 0;
+    peso = json['peso'] ?? 0;
+    tipoRacao = json['tipoRacao'] ?? '';
+    pesoDispenser = json['pesoDispenser'] ?? 0;
+    pesoPote = json['pesoPote'] ?? 0;
+    comFome = json['comFome'] ?? false;
+    tempoComer = json['tempoComer'] ?? 0;
 
     agendas = [];
     for (Map<String, dynamic> e in json['agendas']) {
@@ -58,6 +64,8 @@ class Bixo with ChangeNotifier {
     toReturn['tipoRacao'] = tipoRacao;
     toReturn['pesoDispenser'] = pesoDispenser;
     toReturn['pesoPote'] = pesoPote;
+    toReturn['comFome'] = comFome;
+    toReturn['tempoComer'] = tempoComer;
 
     toReturn['agendas'] = [];
     for (Agenda e in agendas) {
