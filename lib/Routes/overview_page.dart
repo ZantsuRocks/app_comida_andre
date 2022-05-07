@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Models/bixo.dart';
+import '../Repositories/bixo_repo.dart';
 
 class OverviewPage extends StatefulWidget {
   const OverviewPage({Key? key}) : super(key: key);
@@ -38,6 +39,7 @@ class _OverviewPageState extends State<OverviewPage> {
           fit: BoxFit.fitHeight,
         ),
         actions: [
+          IconButton(onPressed: _refreshButton, icon: const Icon(Icons.refresh)),
           IconButton(onPressed: _settingsButton, icon: const Icon(Icons.settings)),
         ],
       ),
@@ -62,9 +64,8 @@ class _OverviewPageState extends State<OverviewPage> {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              //FIXME Ver pesos para mensagens
               Text((alRacao ?? 9999) >= bixoWatch.pesoDispenser ? 'Repor Ração' : 'Tem Ração'),
-              Text(bixoWatch.pesoDispenser > 20 ? 'Não alimentou-se' : 'Alimentou-se'),
+              Text(bixoWatch.comFome ? 'Não alimentou-se' : 'Alimentou-se'),
             ],
           ),
         ],
@@ -184,6 +185,11 @@ class _OverviewPageState extends State<OverviewPage> {
 
   _settingsButton() {
     Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PetPage()));
+  }
+
+  _refreshButton() async {
+    await BixoRepo.fillBixo(bixoToFill: context.read<Bixo>());
+    await BixoRepo.fillBixoImage(bixoToFill: context.read<Bixo>());
   }
 
   _loadShared() async {
