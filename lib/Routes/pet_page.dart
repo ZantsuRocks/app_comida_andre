@@ -4,8 +4,10 @@ import 'package:appcomidaandre/Models/agenda.dart';
 import 'package:appcomidaandre/Repositories/bixo_repo.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Models/bixo.dart';
 
@@ -18,11 +20,14 @@ class PetPage extends StatefulWidget {
 
 class _PetPageState extends State<PetPage> {
   Logger logger = Logger();
+
+  late SharedPreferences prefs;
+
   late List<Agenda> _agendas;
 
   late ScrollController _scrollController;
   late TextEditingController _nomeDoPetCont, _idadeDoPetCont, _pesoDoPetCont, _racaoDoPetCont, _alarmeRacao;
-  String? _errIdade, _errPeso;
+  String? _errIdade, _errPeso, _errAlarme;
   late Image _petFoto;
 
   File? file;
@@ -136,7 +141,12 @@ class _PetPageState extends State<PetPage> {
           ),
           ListTile(
             title: TextField(
-              decoration: const InputDecoration(labelText: 'Alarme de Ração'),
+              controller: _alarmeRacao,
+              decoration: InputDecoration(
+                labelText: 'Alarme de Ração',
+                suffixText: 'g',
+                errorText: _errAlarme,
+              ),
             ),
           ),
           ListTile(
@@ -236,18 +246,25 @@ class _PetPageState extends State<PetPage> {
 
     Bixo initBixo = context.read<Bixo>();
 
-    // SchedulerBinding.instance?.addPostFrameCallback((dur) {
     _nomeDoPetCont.text = initBixo.nome;
     _idadeDoPetCont.text = initBixo.idade.toString();
     _pesoDoPetCont.text = initBixo.peso.toString();
     _racaoDoPetCont.text = initBixo.tipoRacao;
+    _alarmeRacao.text = '0';
     _petFoto = Image.memory(initBixo.fotoAsBytes);
     _agendas = List.from(initBixo.agendas);
 
-    //   setState(() {});
-    // });
+    SchedulerBinding.instance?.addPostFrameCallback((dur) {
+      _loadShared();
+    });
+  }
 
-    // _agendas = [];
+  _loadShared() async {
+    prefs = await SharedPreferences.getInstance();
+
+    _alarmeRacao.text = (prefs.getDouble('alRacao') ?? 0).toString();
+
+    setState(() {});
   }
 
   _changeImage() async {
@@ -282,6 +299,7 @@ class _PetPageState extends State<PetPage> {
           content: const Text('Validar campos.'),
         ),
       );
+      setState(() {});
       return;
     }
 
@@ -298,6 +316,8 @@ class _PetPageState extends State<PetPage> {
     );
 
     try {
+      await prefs.setDouble('alRacao', double.parse(_alarmeRacao.text));
+
       await BixoRepo.sendBixo(bixoToSend, bixoToReplace: currentBixo);
 
       if (file != null) {
@@ -320,6 +340,7 @@ class _PetPageState extends State<PetPage> {
           content: const Text('Não foi possivel salvar todas as informações'),
         ),
       );
+      setState(() {});
     }
   }
 
@@ -327,12 +348,17 @@ class _PetPageState extends State<PetPage> {
     bool retorno = true;
     _errIdade = null;
     _errPeso = null;
+    _errAlarme = null;
     if (int.tryParse(_idadeDoPetCont.text) == null) {
       _errIdade = 'Idade deve ser um numero';
       retorno = false;
     }
     if (num.tryParse(_pesoDoPetCont.text) == null) {
       _errPeso = 'Peso deve ser um numero';
+      retorno = false;
+    }
+    if (num.tryParse(_alarmeRacao.text) == null) {
+      _errAlarme = 'Peso deve ser um numero';
       retorno = false;
     }
 

@@ -1,7 +1,9 @@
 import 'package:appcomidaandre/Routes/pet_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Models/bixo.dart';
 
@@ -14,6 +16,8 @@ class OverviewPage extends StatefulWidget {
 
 class _OverviewPageState extends State<OverviewPage> {
   Logger logger = Logger();
+  late SharedPreferences prefs;
+  num? alRacao;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +63,7 @@ class _OverviewPageState extends State<OverviewPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               //FIXME Ver pesos para mensagens
-              Text(bixoWatch.pesoDispenser < 10 ? 'Repor Ração' : 'Tem Ração'),
+              Text((alRacao ?? 9999) >= bixoWatch.pesoDispenser ? 'Repor Ração' : 'Tem Ração'),
               Text(bixoWatch.pesoDispenser > 20 ? 'Não alimentou-se' : 'Alimentou-se'),
             ],
           ),
@@ -169,7 +173,24 @@ class _OverviewPageState extends State<OverviewPage> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+
+    SchedulerBinding.instance?.addPostFrameCallback((dur) {
+      _loadShared();
+    });
+  }
+
   _settingsButton() {
     Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PetPage()));
+  }
+
+  _loadShared() async {
+    prefs = await SharedPreferences.getInstance();
+
+    alRacao = prefs.getDouble('alRacao') ?? 0;
+
+    setState(() {});
   }
 }
