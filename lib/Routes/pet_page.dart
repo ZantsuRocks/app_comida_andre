@@ -26,8 +26,8 @@ class _PetPageState extends State<PetPage> {
   late List<Agenda> _agendas;
 
   late ScrollController _scrollController;
-  late TextEditingController _nomeDoPetCont, _idadeDoPetCont, _pesoDoPetCont, _racaoDoPetCont, _alarmeRacao;
-  String? _errIdade, _errPeso, _errAlarme;
+  late TextEditingController _nomeDoPetCont, _idadeDoPetCont, _pesoDoPetCont, _racaoDoPetCont, _alarmeRacao, _alarmeAlim;
+  String? _errIdade, _errPeso, _errAlarme, _errAlim;
   late Image _petFoto;
 
   File? file;
@@ -150,8 +150,14 @@ class _PetPageState extends State<PetPage> {
             ),
           ),
           ListTile(
-            title: const Text('Alarme de Alimentação'),
-            trailing: Text('00:00'),
+            title: TextField(
+              controller: _alarmeAlim,
+              decoration: InputDecoration(
+                labelText: 'Alarme de Alimentação',
+                suffixText: 'min',
+                errorText: _errAlim,
+              ),
+            ),
           ),
           ListTile(
             title: const Text('Alimentações'),
@@ -242,6 +248,7 @@ class _PetPageState extends State<PetPage> {
     _pesoDoPetCont = TextEditingController();
     _racaoDoPetCont = TextEditingController();
     _alarmeRacao = TextEditingController();
+    _alarmeAlim = TextEditingController();
     _petFoto = const Image(image: AssetImage('assets/images/logoPD.png'));
 
     Bixo initBixo = context.read<Bixo>();
@@ -251,6 +258,7 @@ class _PetPageState extends State<PetPage> {
     _pesoDoPetCont.text = initBixo.peso.toString();
     _racaoDoPetCont.text = initBixo.tipoRacao;
     _alarmeRacao.text = '0';
+    _alarmeAlim.text = initBixo.tempoComer.toString();
     _petFoto = Image.memory(initBixo.fotoAsBytes);
     _agendas = List.from(initBixo.agendas);
 
@@ -313,6 +321,8 @@ class _PetPageState extends State<PetPage> {
       agendas: _agendas,
       pesoDispenser: currentBixo.pesoDispenser,
       pesoPote: currentBixo.pesoPote,
+      comFome: currentBixo.comFome,
+      tempoComer: int.tryParse(_alarmeAlim.text)!,
     );
 
     try {
@@ -349,6 +359,7 @@ class _PetPageState extends State<PetPage> {
     _errIdade = null;
     _errPeso = null;
     _errAlarme = null;
+    _errAlim = null;
     if (int.tryParse(_idadeDoPetCont.text) == null) {
       _errIdade = 'Idade deve ser um numero';
       retorno = false;
@@ -359,6 +370,10 @@ class _PetPageState extends State<PetPage> {
     }
     if (num.tryParse(_alarmeRacao.text) == null) {
       _errAlarme = 'Peso deve ser um numero';
+      retorno = false;
+    }
+    if (num.tryParse(_alarmeAlim.text) == null) {
+      _errAlim = 'Alarme deve ser um numero';
       retorno = false;
     }
 
