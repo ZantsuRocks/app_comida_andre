@@ -299,7 +299,23 @@ class _PetPageState extends State<PetPage> {
   }
 
   _sendToEsp() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Aguarde'),
+        content: SizedBox(
+          height: 90,
+          child: Center(
+            child: LoadingAnimationWidget.staggeredDotsWave(color: Theme.of(ctx).primaryColor, size: 50),
+          ),
+        ),
+      ),
+    );
+
     if (!_validaCampos()) {
+      Navigator.pop(context); //Fecha Loader
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Theme.of(context).errorColor,
@@ -307,6 +323,7 @@ class _PetPageState extends State<PetPage> {
           content: const Text('Validar campos.'),
         ),
       );
+
       setState(() {});
       return;
     }
@@ -334,15 +351,19 @@ class _PetPageState extends State<PetPage> {
         await BixoRepo.sendBixoImage(file!.readAsBytesSync(), bixoToReplace: currentBixo);
       }
 
+      Navigator.pop(context); //Fecha Loader
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           duration: Duration(seconds: 3),
-          content: Text('Informações salvas.'),
+          content: Text('Informações Enviadas.'),
         ),
       );
 
       Navigator.pop(context);
     } catch (err) {
+      Navigator.pop(context); //Fecha Loader
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Theme.of(context).errorColor,
@@ -350,6 +371,7 @@ class _PetPageState extends State<PetPage> {
           content: const Text('Não foi possivel salvar todas as informações'),
         ),
       );
+      
       setState(() {});
     }
   }
