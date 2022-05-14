@@ -100,15 +100,15 @@ class _FakeLoginPageState extends State<FakeLoginPage> {
     );
 
     try {
-      // String passToConnect = 'dosadorpet';
-      // String ssidToConnect = 'dosador_pet';
-      // await WiFiForIoTPlugin.findAndConnect(ssidToConnect, password: passToConnect);
-      // int tempoFaltando = 15;
-      // while (await WiFiForIoTPlugin.getSSID() != ssidToConnect) {
-      //   await Future.delayed(const Duration(seconds: 1));
-      //   if (tempoFaltando-- <= 0) throw ('Tempo limite de conexão excedido.');
-      // }
-      // await WiFiForIoTPlugin.forceWifiUsage(true);
+      String passToConnect = 'dosadorpet';
+      String ssidToConnect = 'dosador_pet';
+      await WiFiForIoTPlugin.findAndConnect(ssidToConnect, password: passToConnect);
+      int tempoFaltando = 15;
+      while (await WiFiForIoTPlugin.getSSID() != ssidToConnect) {
+        await Future.delayed(const Duration(seconds: 1));
+        if (tempoFaltando-- <= 0) throw ('Tempo limite de conexão excedido.');
+      }
+      await WiFiForIoTPlugin.forceWifiUsage(true);
 
       await BixoRepo.fillBixo(bixoToFill: context.read<Bixo>());
       await BixoRepo.fillBixoImage(bixoToFill: context.read<Bixo>());
