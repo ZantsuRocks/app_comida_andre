@@ -263,7 +263,7 @@ class _PetPageState extends State<PetPage> {
     _petFoto = Image.memory(initBixo.fotoAsBytes);
     _agendas = List.from(initBixo.agendas);
 
-    SchedulerBinding.instance?.addPostFrameCallback((dur) {
+    SchedulerBinding.instance.addPostFrameCallback((dur) {
       _loadShared();
     });
   }

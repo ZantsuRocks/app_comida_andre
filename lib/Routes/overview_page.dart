@@ -178,7 +178,7 @@ class _OverviewPageState extends State<OverviewPage> {
   void initState() {
     super.initState();
 
-    SchedulerBinding.instance?.addPostFrameCallback((dur) {
+    SchedulerBinding.instance.addPostFrameCallback((dur) {
       _loadShared();
     });
   }
