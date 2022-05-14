@@ -6,8 +6,8 @@ import 'package:http/http.dart';
 import '../Models/bixo.dart';
 
 class BixoRepo {
-  static String startPath = 'http://192.168.4.1/';
-  // static String startPath = 'http://192.168.0.10/api/v1/';
+  // static String startPath = 'http://192.168.4.1/';
+  static String startPath = 'http://192.168.0.18/api/v1/';
   static final Uri _urlGet = Uri.parse('${startPath}get');
   static final Uri _urlPost = Uri.parse('${startPath}post');
   static final Uri _urlImageGet = Uri.parse('${startPath}image-get');

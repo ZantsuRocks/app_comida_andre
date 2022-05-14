@@ -54,7 +54,7 @@ class _PetPageState extends State<PetPage> {
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 100,
+        // toolbarHeight: 100,
         title: Image.asset(
           'assets/images/logoFullWhite.png',
           fit: BoxFit.fitHeight,
@@ -316,7 +316,7 @@ class _PetPageState extends State<PetPage> {
 
     if (!_validaCampos()) {
       Navigator.pop(context); //Fecha Loader
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Theme.of(context).errorColor,
@@ -372,7 +372,7 @@ class _PetPageState extends State<PetPage> {
           content: const Text('Não foi possivel salvar todas as informações'),
         ),
       );
-      
+
       setState(() {});
     }
   }

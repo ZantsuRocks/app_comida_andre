@@ -1,5 +1,5 @@
 [![CI](https://github.com/ZantsuRocks/app_comida_andre/actions/workflows/main.yml/badge.svg)](https://github.com/ZantsuRocks/app_comida_andre/actions/workflows/main.yml)
-# Pet Dose
+# Pet Dose / Pet Portion
 
 Projeto feito em Flutter para rodar em conjunto com o [ESP - Dosador Pet](https://github.com/denilsondossantos/dosadorPet)
 

@@ -33,7 +33,7 @@ class _OverviewPageState extends State<OverviewPage> {
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 100,
+        // toolbarHeight: 100,
         title: Image.asset(
           'assets/images/logoFullWhite.png',
           fit: BoxFit.fitHeight,
