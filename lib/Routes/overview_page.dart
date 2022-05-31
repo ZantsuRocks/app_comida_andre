@@ -17,6 +17,7 @@ class OverviewPage extends StatefulWidget {
 
 class _OverviewPageState extends State<OverviewPage> {
   Logger logger = Logger();
+  late bool _refresing;
   late SharedPreferences prefs;
   num? alRacao;
 
@@ -39,7 +40,7 @@ class _OverviewPageState extends State<OverviewPage> {
           fit: BoxFit.fitHeight,
         ),
         actions: [
-          IconButton(onPressed: _refreshButton, icon: const Icon(Icons.refresh)),
+          IconButton(onPressed: _refreshing?_refreshButton:null, icon: const Icon(Icons.refresh)),
           IconButton(onPressed: _settingsButton, icon: const Icon(Icons.settings)),
         ],
       ),
@@ -178,8 +179,12 @@ class _OverviewPageState extends State<OverviewPage> {
   void initState() {
     super.initState();
 
+    _refreshing = false;
+
     SchedulerBinding.instance.addPostFrameCallback((dur) {
       _loadShared();
+      
+      _selfRefresher();
     });
   }
 
@@ -187,9 +192,21 @@ class _OverviewPageState extends State<OverviewPage> {
     Navigator.push(context, MaterialPageRoute(builder: (ctx) => const PetPage()));
   }
 
+  _selfRefresher() async {
+    if(context.mounted) await _refreshButton();
+    Future.delayed(const Duration(seconds: 5), () {
+      _selfRefresher();
+    });
+  }
+
   _refreshButton() async {
+    _refreshing = true;
+    setState((){});
     await BixoRepo.fillBixo(bixoToFill: context.read<Bixo>());
     await BixoRepo.fillBixoImage(bixoToFill: context.read<Bixo>());
+
+    _refreshing = false;
+    setState((){});
   }
 
   _loadShared() async {
