@@ -147,14 +147,14 @@ class _OverviewPageState extends State<OverviewPage> {
               'Peso de Ração no Dispenser',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            trailing: Text(bixoWatch.pesoDispenser.toString() + 'g'),
+            trailing: Text(bixoWatch.pesoDispenser.toStringAsFixed(2) + 'g'),
           ),
           ListTile(
             title: const Text(
               'Peso de Ração no pote',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            trailing: Text(bixoWatch.pesoPote.toString() + 'g'),
+            trailing: Text(bixoWatch.pesoPote.toStringAsFixed(2) + 'g'),
           ),
           const Divider(height: 16),
           ListTile(
